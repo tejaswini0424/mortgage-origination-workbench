@@ -8,6 +8,10 @@ import time
 def main():
     python = sys.executable
     os.environ["AUTO_CREATE_SCHEMA"] = "0"
+    # Render secret files can be uploaded from Windows with CRLF line endings.
+    for name in ("DATABASE_URL", "SESSION_SECRET", "REVIEWER_PASSWORD"):
+        if name in os.environ:
+            os.environ[name] = os.environ[name].rstrip(chr(13))
     if not os.environ.get("DATABASE_URL"):
         raise RuntimeError("Set DATABASE_URL to the hosted PostgreSQL connection URL.")
     if not os.environ.get("SESSION_SECRET"):

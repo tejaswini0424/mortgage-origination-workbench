@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: mortgage-origination-workbench-api
+    runtime: docker
+    plan: free
+    region: virginia
+    dockerfilePath: ./backend/Dockerfile
+    dockerCommand: python -m backend.app.railway
+    healthCheckPath: /healthz
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: WORKBENCH_ORIGINS
+        sync: false
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: COOKIE_SECURE
+        value: "1"
+      - key: DOCUMENT_STORAGE
+        value: database
+      - key: MORTGAGE_DATA
+        value: /tmp/workbench

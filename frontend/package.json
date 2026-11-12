@@ -1,0 +1,1 @@
+{"name":"mortgage-workbench","private":true,"type":"module","scripts":{"dev":"vite","build":"tsc --noEmit && vite build"},"dependencies":{"lucide-react":"^0.468.0","react":"^19","react-dom":"^19","react-router-dom":"^7"},"devDependencies":{"@playwright/test":"^1.65.0","@types/react":"^19","@types/react-dom":"^19","typescript":"^5.7","vite":"^6"}}

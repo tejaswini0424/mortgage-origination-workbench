@@ -1,0 +1,13 @@
+runtime/
+.env
+__pycache__/
+.pytest_cache/
+.venv/
+node_modules/
+dist/
+.npm-cache/
+test-results/
+playwright-report/
+frontend/vercel.generated.json
+frontend/.vercel/
+.railway/

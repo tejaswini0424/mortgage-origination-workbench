@@ -111,15 +111,17 @@ def checks(case, docs, saved=None):
 @app.middleware("http")
 async def prevent_cross_site_writes(request: Request, call_next):
     if request.method not in {"GET", "HEAD", "OPTIONS"}:
-        if request.headers.get("sec-fetch-site") == "cross-site":
-            return Response(status_code=403)
         origin = request.headers.get("origin")
         allowed = {value.strip().rstrip("/") for value in os.getenv(
             "WORKBENCH_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173,http://localhost:8080,http://127.0.0.1:8080"
         ).split(",")}
-        allowed.add(str(request.base_url).rstrip("/"))
-        if origin and origin not in allowed:
-            return Response(status_code=403)
+        same_origin = str(request.base_url).rstrip("/")
+        cross_site = request.headers.get("sec-fetch-site") == "cross-site"
+        if (origin and origin not in allowed and origin != same_origin) or (cross_site and origin not in allowed):
+            return Response(
+                json.dumps({"detail": "This request came from an unrecognized site. Open the workbench in its own browser tab."}),
+                status_code=403, media_type="application/json", headers={"Cache-Control": "no-store"},
+            )
     response = await call_next(request)
     if request.url.path.startswith(PREFIX):
         response.headers["Cache-Control"] = "no-store"

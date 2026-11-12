@@ -129,7 +129,16 @@ function App() {
             setRegistering(!registering);
             setError("");
           }}>{registering ? "Back to sign in" : "Create account"}</button></p>
-          {error && <p role="alert">{error}</p>}
+          {error && (
+            <p role="alert">
+              {error}{" "}
+              {window.location.hostname.endsWith(".vercel.app") && (
+                <a href="https://mortgage-origination-workbench.vercel.app/" target="_blank" rel="noopener">
+                  Open the public workbench in a new tab
+                </a>
+              )}
+            </p>
+          )}
         </form>
       </main>
     );

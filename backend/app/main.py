@@ -117,7 +117,13 @@ async def prevent_cross_site_writes(request: Request, call_next):
         ).split(",")}
         same_origin = str(request.base_url).rstrip("/")
         cross_site = request.headers.get("sec-fetch-site") == "cross-site"
-        if (origin and origin not in allowed and origin != same_origin) or (cross_site and origin not in allowed):
+        # Browsers cannot attach this header from another origin without a
+        # successful CORS preflight. This API does not grant cross-origin CORS.
+        frontend_request = request.headers.get("x-workbench-request") == "1"
+        origin_rejected = (origin and origin not in allowed and origin != same_origin) or (
+            cross_site and origin not in allowed
+        )
+        if origin_rejected and not frontend_request:
             return Response(
                 json.dumps({"detail": "This request came from an unrecognized site. Open the workbench in its own browser tab."}),
                 status_code=403, media_type="application/json", headers={"Cache-Control": "no-store"},
